@@ -1,0 +1,602 @@
+import numpy as np
+import pandas as pd
+import warnings
+warnings.filterwarnings('ignore')
+columns_name=['user_id','item_id','rating','timestamp']
+df=pd.read_csv('u.data',sep="\t",names=columns_name)
+df.head()
+user_id	item_id	rating	timestamp
+0	196	242	3	881250949
+1	186	302	3	891717742
+2	22	377	1	878887116
+3	244	51	2	880606923
+4	166	346	1	886397596
+df.shape
+(99999, 4)
+df['user_id']
+0        196
+1        186
+2         22
+3        244
+4        166
+5        298
+6        115
+7        253
+8        305
+9          6
+10        62
+11       286
+12       200
+13       210
+14       224
+15       303
+16       122
+17       194
+18       291
+19       234
+20       119
+21       167
+22       299
+23       291
+24       308
+25        95
+26        38
+27       102
+28        63
+29       160
+        ... 
+99970    449
+99971    661
+99972    721
+99973    821
+99974    764
+99975    537
+99976    618
+99977    487
+99978    113
+99979    943
+99980    864
+99981    750
+99982    279
+99983    646
+99984    654
+99985    617
+99986    913
+99987    660
+99988    421
+99989    495
+99990    806
+99991    676
+99992    721
+99993    913
+99994    378
+99995    880
+99996    716
+99997    276
+99998     13
+99999     12
+Name: user_id, Length: 100000, dtype: int64
+df['user_id'].nunique()
+943
+df['item_id'].nunique()
+1682
+movies_title=pd.read_csv('u.item',sep="\|",header=None)
+movies_title.shape
+(1682, 24)
+movies_titles=movies_title[[0,1]]
+movies_titles.columns=["item_id","title"]
+movies_titles.head()
+item_id	title
+0	1	Toy Story (1995)
+1	2	GoldenEye (1995)
+2	3	Four Rooms (1995)
+3	4	Get Shorty (1995)
+4	5	Copycat (1995)
+df=pd.merge(df,movies_titles,on="item_id")
+df
+user_id	item_id	rating	timestamp	title
+0	196	242	3	881250949	Kolya (1996)
+1	63	242	3	875747190	Kolya (1996)
+2	226	242	5	883888671	Kolya (1996)
+3	154	242	3	879138235	Kolya (1996)
+4	306	242	5	876503793	Kolya (1996)
+5	296	242	4	884196057	Kolya (1996)
+6	34	242	5	888601628	Kolya (1996)
+7	271	242	4	885844495	Kolya (1996)
+8	201	242	4	884110598	Kolya (1996)
+9	209	242	4	883589606	Kolya (1996)
+10	35	242	2	875459166	Kolya (1996)
+11	354	242	5	891180399	Kolya (1996)
+12	199	242	5	883782485	Kolya (1996)
+13	113	242	2	875075887	Kolya (1996)
+14	1	242	5	889751633	Kolya (1996)
+15	173	242	5	877556626	Kolya (1996)
+16	360	242	4	880353616	Kolya (1996)
+17	234	242	4	891033261	Kolya (1996)
+18	14	242	4	876964570	Kolya (1996)
+19	309	242	4	877370319	Kolya (1996)
+20	331	242	4	877196089	Kolya (1996)
+21	21	242	3	874951617	Kolya (1996)
+22	111	242	4	891679901	Kolya (1996)
+23	439	242	5	882892424	Kolya (1996)
+24	355	242	4	879486529	Kolya (1996)
+25	204	242	5	892388935	Kolya (1996)
+26	145	242	5	875269755	Kolya (1996)
+27	30	242	5	885941156	Kolya (1996)
+28	463	242	2	889935629	Kolya (1996)
+29	144	242	4	888103444	Kolya (1996)
+...	...	...	...	...	...
+99970	405	1564	1	885546288	To Cross the Rubicon (1991)
+99971	456	1604	4	881372849	He Walked by Night (1948)
+99972	405	1574	1	885546529	Pharaoh's Army (1995)
+99973	883	1448	5	891695570	My Favorite Season (1993)
+99974	655	1448	3	887523224	My Favorite Season (1993)
+99975	234	1448	3	892335187	My Favorite Season (1993)
+99976	787	1671	1	888980193	Further Gesture, A (1996)
+99977	587	1625	4	892871732	Nightwatch (1997)
+99978	782	1665	2	891500194	Brother's Kiss, A (1997)
+99979	181	1325	1	878962816	August (1996)
+99980	782	1670	3	891497793	Tainted (1998)
+99981	181	1341	1	878962169	Hedd Wyn (1992)
+99982	181	1352	1	878962240	Shadow of Angels (Schatten der Engel) (1976)
+99983	655	1636	4	887473570	Brothers in Trouble (1995)
+99984	896	1681	3	887160722	You So Crazy (1994)
+99985	655	1638	3	887488947	Normal Life (1996)
+99986	782	1667	3	891500110	Next Step, The (1995)
+99987	851	1675	3	884222085	Sunchaser, The (1996)
+99988	234	1460	3	892335460	Sleepover (1995)
+99989	532	1594	4	893115576	Everest (1998)
+99990	416	1594	5	893212484	Everest (1998)
+99991	648	1626	1	884795447	Nobody Loves Me (Keiner liebt mich) (1994)
+99992	655	1645	4	892871225	Butcher Boy, The (1998)
+99993	747	1659	1	888733313	Getting Away With Murder (1996)
+99994	916	1682	3	880845755	Scream of Stone (Schrei aus Stein) (1991)
+99995	840	1674	4	891211682	Mamma Roma (1962)
+99996	655	1640	3	888474646	Eighth Day, The (1996)
+99997	655	1637	3	888984255	Girls Town (1996)
+99998	655	1630	3	887428735	Silence of the Palace, The (Saimt el Qusur) (1...
+99999	655	1641	3	887427810	Dadetown (1995)
+100000 rows × 5 columns
+
+df.tail()
+user_id	item_id	rating	timestamp	title
+99995	840	1674	4	891211682	Mamma Roma (1962)
+99996	655	1640	3	888474646	Eighth Day, The (1996)
+99997	655	1637	3	888984255	Girls Town (1996)
+99998	655	1630	3	887428735	Silence of the Palace, The (Saimt el Qusur) (1...
+99999	655	1641	3	887427810	Dadetown (1995)
+ratings=pd.DataFrame(df.groupby('title').mean()['rating'])
+ratings.head()
+rating
+title	
+'Til There Was You (1997)	2.333333
+1-900 (1994)	2.600000
+101 Dalmatians (1996)	2.908257
+12 Angry Men (1957)	4.344000
+187 (1997)	3.024390
+ratings['num of ratings']=pd.DataFrame(df.groupby('title').count()['rating'])
+#Create the recommendar System
+
+df.head()
+user_id	item_id	rating	timestamp	title
+0	196	242	3	881250949	Kolya (1996)
+1	63	242	3	875747190	Kolya (1996)
+2	226	242	5	883888671	Kolya (1996)
+3	154	242	3	879138235	Kolya (1996)
+4	306	242	5	876503793	Kolya (1996)
+moviemat=df.pivot_table(index="user_id",columns="title",values="rating")
+moviemat.head()
+title	'Til There Was You (1997)	1-900 (1994)	101 Dalmatians (1996)	12 Angry Men (1957)	187 (1997)	2 Days in the Valley (1996)	20,000 Leagues Under the Sea (1954)	2001: A Space Odyssey (1968)	3 Ninjas: High Noon At Mega Mountain (1998)	39 Steps, The (1935)	...	Yankee Zulu (1994)	Year of the Horse (1997)	You So Crazy (1994)	Young Frankenstein (1974)	Young Guns (1988)	Young Guns II (1990)	Young Poisoner's Handbook, The (1995)	Zeus and Roxanne (1997)	unknown	Á köldum klaka (Cold Fever) (1994)
+user_id																					
+1	NaN	NaN	2.0	5.0	NaN	NaN	3.0	4.0	NaN	NaN	...	NaN	NaN	NaN	5.0	3.0	NaN	NaN	NaN	4.0	NaN
+2	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	1.0	NaN	...	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN
+3	NaN	NaN	NaN	NaN	2.0	NaN	NaN	NaN	NaN	NaN	...	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN
+4	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	...	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN	NaN
+5	NaN	NaN	2.0	NaN	NaN	NaN	NaN	4.0	NaN	NaN	...	NaN	NaN	NaN	4.0	NaN	NaN	NaN	NaN	4.0	NaN
+5 rows × 1664 columns
+
+starwars_user_ratings=moviemat['Star Wars (1977)']
+starwars_user_ratings.head(20)
+user_id
+1     5.0
+2     5.0
+3     NaN
+4     5.0
+5     4.0
+6     4.0
+7     5.0
+8     5.0
+9     5.0
+10    5.0
+11    NaN
+12    4.0
+13    5.0
+14    5.0
+15    5.0
+16    NaN
+17    NaN
+18    4.0
+19    NaN
+20    3.0
+Name: Star Wars (1977), dtype: float64
+similar_to_starwars=moviemat.corrwith(starwars_user_ratings)
+similar_to_starwars
+title
+'Til There Was You (1997)                                   0.872872
+1-900 (1994)                                               -0.645497
+101 Dalmatians (1996)                                       0.211132
+12 Angry Men (1957)                                         0.184289
+187 (1997)                                                  0.027398
+2 Days in the Valley (1996)                                 0.066654
+20,000 Leagues Under the Sea (1954)                         0.289768
+2001: A Space Odyssey (1968)                                0.230884
+3 Ninjas: High Noon At Mega Mountain (1998)                      NaN
+39 Steps, The (1935)                                        0.106453
+8 1/2 (1963)                                               -0.142977
+8 Heads in a Duffel Bag (1997)                             -0.577350
+8 Seconds (1994)                                           -0.755929
+A Chef in Love (1996)                                       0.868599
+Above the Rim (1994)                                       -0.645497
+Absolute Power (1997)                                       0.085440
+Abyss, The (1989)                                           0.203709
+Ace Ventura: Pet Detective (1994)                           0.062689
+Ace Ventura: When Nature Calls (1995)                       0.094514
+Across the Sea of Time (1995)                              -0.132453
+Addams Family Values (1993)                                 0.132264
+Addicted to Love (1997)                                     0.028173
+Addiction, The (1995)                                       0.507093
+Adventures of Pinocchio, The (1996)                         0.111616
+Adventures of Priscilla, Queen of the Desert, The (1994)    0.054740
+Adventures of Robin Hood, The (1938)                        0.144587
+Affair to Remember, An (1957)                               0.225451
+African Queen, The (1951)                                   0.230540
+Afterglow (1997)                                            0.420084
+Age of Innocence, The (1993)                               -0.037176
+                                                              ...   
+Window to Paris (1994)                                           NaN
+Wings of Courage (1995)                                          NaN
+Wings of Desire (1987)                                     -0.104771
+Wings of the Dove, The (1997)                               0.000000
+Winnie the Pooh and the Blustery Day (1968)                 0.142924
+Winter Guest, The (1997)                                    0.353553
+Wishmaster (1997)                                          -0.066932
+With Honors (1994)                                         -0.111205
+Withnail and I (1987)                                       0.083045
+Witness (1985)                                                   NaN
+Wizard of Oz, The (1939)                                    0.266335
+Wolf (1994)                                                 0.113214
+Woman in Question, The (1950)                                    NaN
+Women, The (1939)                                          -0.175608
+Wonderful, Horrible Life of Leni Riefenstahl, The (1993)    0.707107
+Wonderland (1997)                                                NaN
+Wooden Man's Bride, The (Wu Kui) (1994)                          NaN
+World of Apu, The (Apur Sansar) (1959)                     -0.522233
+Wrong Trousers, The (1993)                                  0.216204
+Wyatt Earp (1994)                                           0.059560
+Yankee Zulu (1994)                                               NaN
+Year of the Horse (1997)                                   -1.000000
+You So Crazy (1994)                                              NaN
+Young Frankenstein (1974)                                   0.192589
+Young Guns (1988)                                           0.186377
+Young Guns II (1990)                                        0.228615
+Young Poisoner's Handbook, The (1995)                      -0.007374
+Zeus and Roxanne (1997)                                     0.818182
+unknown                                                     0.723123
+Á köldum klaka (Cold Fever) (1994)                               NaN
+Length: 1664, dtype: float64
+corr_starwars=pd.DataFrame(similar_to_starwars,columns=['correlation'])
+corr_starwars.dropna(inplace=True)
+corr_starwars
+Correlation
+title	
+'Til There Was You (1997)	0.872872
+1-900 (1994)	-0.645497
+101 Dalmatians (1996)	0.211132
+12 Angry Men (1957)	0.184289
+187 (1997)	0.027398
+2 Days in the Valley (1996)	0.066654
+20,000 Leagues Under the Sea (1954)	0.289768
+2001: A Space Odyssey (1968)	0.230884
+39 Steps, The (1935)	0.106453
+8 1/2 (1963)	-0.142977
+8 Heads in a Duffel Bag (1997)	-0.577350
+8 Seconds (1994)	-0.755929
+A Chef in Love (1996)	0.868599
+Above the Rim (1994)	-0.645497
+Absolute Power (1997)	0.085440
+Abyss, The (1989)	0.203709
+Ace Ventura: Pet Detective (1994)	0.062689
+Ace Ventura: When Nature Calls (1995)	0.094514
+Across the Sea of Time (1995)	-0.132453
+Addams Family Values (1993)	0.132264
+Addicted to Love (1997)	0.028173
+Addiction, The (1995)	0.507093
+Adventures of Pinocchio, The (1996)	0.111616
+Adventures of Priscilla, Queen of the Desert, The (1994)	0.054740
+Adventures of Robin Hood, The (1938)	0.144587
+Affair to Remember, An (1957)	0.225451
+African Queen, The (1951)	0.230540
+Afterglow (1997)	0.420084
+Age of Innocence, The (1993)	-0.037176
+Air Bud (1997)	0.012557
+...	...
+Whole Wide World, The (1996)	0.000000
+Widows' Peak (1994)	0.136743
+Wild America (1997)	0.040656
+Wild Bill (1995)	-0.286299
+Wild Bunch, The (1969)	-0.041299
+Wild Reeds (1994)	-0.377964
+Wild Things (1998)	-0.259437
+William Shakespeare's Romeo and Juliet (1996)	0.098861
+Willy Wonka and the Chocolate Factory (1971)	0.221902
+Wings of Desire (1987)	-0.104771
+Wings of the Dove, The (1997)	0.000000
+Winnie the Pooh and the Blustery Day (1968)	0.142924
+Winter Guest, The (1997)	0.353553
+Wishmaster (1997)	-0.066932
+With Honors (1994)	-0.111205
+Withnail and I (1987)	0.083045
+Wizard of Oz, The (1939)	0.266335
+Wolf (1994)	0.113214
+Women, The (1939)	-0.175608
+Wonderful, Horrible Life of Leni Riefenstahl, The (1993)	0.707107
+World of Apu, The (Apur Sansar) (1959)	-0.522233
+Wrong Trousers, The (1993)	0.216204
+Wyatt Earp (1994)	0.059560
+Year of the Horse (1997)	-1.000000
+Young Frankenstein (1974)	0.192589
+Young Guns (1988)	0.186377
+Young Guns II (1990)	0.228615
+Young Poisoner's Handbook, The (1995)	-0.007374
+Zeus and Roxanne (1997)	0.818182
+unknown	0.723123
+1410 rows × 1 columns
+
+corr_starwars.head()
+Correlation
+title	
+'Til There Was You (1997)	0.872872
+1-900 (1994)	-0.645497
+101 Dalmatians (1996)	0.211132
+12 Angry Men (1957)	0.184289
+187 (1997)	0.027398
+corr_starwars.sort_values('Correlation',ascending=False).head(10)
+Correlation
+title	
+Man of the Year (1995)	1.0
+Hollow Reed (1996)	1.0
+Stripes (1981)	1.0
+Beans of Egypt, Maine, The (1994)	1.0
+Old Lady Who Walked in the Sea, The (Vieille qui marchait dans la mer, La) (1991)	1.0
+Outlaw, The (1943)	1.0
+Line King: Al Hirschfeld, The (1996)	1.0
+Hurricane Streets (1998)	1.0
+Good Man in Africa, A (1994)	1.0
+Safe Passage (1994)	1.0
+ratings
+rating	num of ratings
+title		
+'Til There Was You (1997)	2.333333	9
+1-900 (1994)	2.600000	5
+101 Dalmatians (1996)	2.908257	109
+12 Angry Men (1957)	4.344000	125
+187 (1997)	3.024390	41
+2 Days in the Valley (1996)	3.225806	93
+20,000 Leagues Under the Sea (1954)	3.500000	72
+2001: A Space Odyssey (1968)	3.969112	259
+3 Ninjas: High Noon At Mega Mountain (1998)	1.000000	5
+39 Steps, The (1935)	4.050847	59
+8 1/2 (1963)	3.815789	38
+8 Heads in a Duffel Bag (1997)	3.250000	4
+8 Seconds (1994)	3.750000	4
+A Chef in Love (1996)	4.125000	8
+Above the Rim (1994)	3.000000	5
+Absolute Power (1997)	3.370079	127
+Abyss, The (1989)	3.589404	151
+Ace Ventura: Pet Detective (1994)	3.048544	103
+Ace Ventura: When Nature Calls (1995)	2.675676	37
+Across the Sea of Time (1995)	2.750000	4
+Addams Family Values (1993)	2.816092	87
+Addicted to Love (1997)	3.166667	54
+Addiction, The (1995)	2.181818	11
+Adventures of Pinocchio, The (1996)	3.051282	39
+Adventures of Priscilla, Queen of the Desert, The (1994)	3.594595	111
+Adventures of Robin Hood, The (1938)	3.791045	67
+Affair to Remember, An (1957)	4.192308	26
+African Queen, The (1951)	4.184211	152
+Afterglow (1997)	3.111111	18
+Age of Innocence, The (1993)	3.384615	65
+...	...	...
+Window to Paris (1994)	4.000000	1
+Wings of Courage (1995)	4.000000	1
+Wings of Desire (1987)	4.000000	57
+Wings of the Dove, The (1997)	3.680000	75
+Winnie the Pooh and the Blustery Day (1968)	3.800000	75
+Winter Guest, The (1997)	3.444444	9
+Wishmaster (1997)	2.444444	27
+With Honors (1994)	3.065217	46
+Withnail and I (1987)	3.230769	13
+Witness (1985)	4.000000	1
+Wizard of Oz, The (1939)	4.077236	246
+Wolf (1994)	2.701493	67
+Woman in Question, The (1950)	1.000000	1
+Women, The (1939)	3.666667	15
+Wonderful, Horrible Life of Leni Riefenstahl, The (1993)	4.000000	10
+Wonderland (1997)	3.200000	10
+Wooden Man's Bride, The (Wu Kui) (1994)	2.666667	3
+World of Apu, The (Apur Sansar) (1959)	4.000000	6
+Wrong Trousers, The (1993)	4.466102	118
+Wyatt Earp (1994)	3.100000	50
+Yankee Zulu (1994)	1.000000	1
+Year of the Horse (1997)	3.285714	7
+You So Crazy (1994)	3.000000	1
+Young Frankenstein (1974)	3.945000	200
+Young Guns (1988)	3.207921	101
+Young Guns II (1990)	2.772727	44
+Young Poisoner's Handbook, The (1995)	3.341463	41
+Zeus and Roxanne (1997)	2.166667	6
+unknown	3.444444	9
+Á köldum klaka (Cold Fever) (1994)	3.000000	1
+1664 rows × 2 columns
+
+corr_starwars=corr_starwars.join(ratings['num of ratings'])
+corr_starwars
+Correlation	num of ratings
+title		
+'Til There Was You (1997)	0.872872	9
+1-900 (1994)	-0.645497	5
+101 Dalmatians (1996)	0.211132	109
+12 Angry Men (1957)	0.184289	125
+187 (1997)	0.027398	41
+2 Days in the Valley (1996)	0.066654	93
+20,000 Leagues Under the Sea (1954)	0.289768	72
+2001: A Space Odyssey (1968)	0.230884	259
+39 Steps, The (1935)	0.106453	59
+8 1/2 (1963)	-0.142977	38
+8 Heads in a Duffel Bag (1997)	-0.577350	4
+8 Seconds (1994)	-0.755929	4
+A Chef in Love (1996)	0.868599	8
+Above the Rim (1994)	-0.645497	5
+Absolute Power (1997)	0.085440	127
+Abyss, The (1989)	0.203709	151
+Ace Ventura: Pet Detective (1994)	0.062689	103
+Ace Ventura: When Nature Calls (1995)	0.094514	37
+Across the Sea of Time (1995)	-0.132453	4
+Addams Family Values (1993)	0.132264	87
+Addicted to Love (1997)	0.028173	54
+Addiction, The (1995)	0.507093	11
+Adventures of Pinocchio, The (1996)	0.111616	39
+Adventures of Priscilla, Queen of the Desert, The (1994)	0.054740	111
+Adventures of Robin Hood, The (1938)	0.144587	67
+Affair to Remember, An (1957)	0.225451	26
+African Queen, The (1951)	0.230540	152
+Afterglow (1997)	0.420084	18
+Age of Innocence, The (1993)	-0.037176	65
+Air Bud (1997)	0.012557	43
+...	...	...
+Whole Wide World, The (1996)	0.000000	6
+Widows' Peak (1994)	0.136743	19
+Wild America (1997)	0.040656	9
+Wild Bill (1995)	-0.286299	12
+Wild Bunch, The (1969)	-0.041299	43
+Wild Reeds (1994)	-0.377964	14
+Wild Things (1998)	-0.259437	11
+William Shakespeare's Romeo and Juliet (1996)	0.098861	106
+Willy Wonka and the Chocolate Factory (1971)	0.221902	326
+Wings of Desire (1987)	-0.104771	57
+Wings of the Dove, The (1997)	0.000000	75
+Winnie the Pooh and the Blustery Day (1968)	0.142924	75
+Winter Guest, The (1997)	0.353553	9
+Wishmaster (1997)	-0.066932	27
+With Honors (1994)	-0.111205	46
+Withnail and I (1987)	0.083045	13
+Wizard of Oz, The (1939)	0.266335	246
+Wolf (1994)	0.113214	67
+Women, The (1939)	-0.175608	15
+Wonderful, Horrible Life of Leni Riefenstahl, The (1993)	0.707107	10
+World of Apu, The (Apur Sansar) (1959)	-0.522233	6
+Wrong Trousers, The (1993)	0.216204	118
+Wyatt Earp (1994)	0.059560	50
+Year of the Horse (1997)	-1.000000	7
+Young Frankenstein (1974)	0.192589	200
+Young Guns (1988)	0.186377	101
+Young Guns II (1990)	0.228615	44
+Young Poisoner's Handbook, The (1995)	-0.007374	41
+Zeus and Roxanne (1997)	0.818182	6
+unknown	0.723123	9
+1410 rows × 2 columns
+
+corr_starwars.head()
+Correlation	num of ratings
+title		
+'Til There Was You (1997)	0.872872	9
+1-900 (1994)	-0.645497	5
+101 Dalmatians (1996)	0.211132	109
+12 Angry Men (1957)	0.184289	125
+187 (1997)	0.027398	41
+corr_starwars[corr_starwars['num of ratings']>100].sort_values('Correlation',ascending=False)
+Correlation	num of ratings
+title		
+Star Wars (1977)	1.000000	583
+Empire Strikes Back, The (1980)	0.747981	367
+Return of the Jedi (1983)	0.672556	507
+Raiders of the Lost Ark (1981)	0.536117	420
+Austin Powers: International Man of Mystery (1997)	0.377433	130
+Sting, The (1973)	0.367538	241
+Indiana Jones and the Last Crusade (1989)	0.350107	331
+Pinocchio (1940)	0.347868	101
+Frighteners, The (1996)	0.332729	115
+L.A. Confidential (1997)	0.319065	297
+Wag the Dog (1997)	0.318645	137
+Dumbo (1941)	0.317656	123
+Bridge on the River Kwai, The (1957)	0.316580	165
+Philadelphia Story, The (1940)	0.314272	104
+Miracle on 34th Street (1994)	0.310921	101
+E.T. the Extra-Terrestrial (1982)	0.303619	300
+Mystery Science Theater 3000: The Movie (1996)	0.301809	130
+Cinderella (1950)	0.299163	129
+Batman (1989)	0.289344	201
+Swingers (1996)	0.289310	157
+Field of Dreams (1989)	0.285286	212
+Gattaca (1997)	0.283005	136
+Star Trek: The Wrath of Khan (1982)	0.282206	244
+Back to the Future (1985)	0.274839	350
+Snow White and the Seven Dwarfs (1937)	0.270346	172
+Wizard of Oz, The (1939)	0.266335	246
+Firm, The (1993)	0.265878	151
+Jaws (1975)	0.265459	280
+Beautiful Girls (1996)	0.265301	115
+Terminator, The (1984)	0.262255	301
+...	...	...
+Phenomenon (1996)	-0.022359	244
+Ice Storm, The (1997)	-0.023698	108
+Carrie (1976)	-0.028377	121
+Dead Man Walking (1995)	-0.034158	299
+Ransom (1996)	-0.035184	267
+Raging Bull (1980)	-0.035647	116
+Strictly Ballroom (1992)	-0.037460	104
+Everyone Says I Love You (1996)	-0.039651	168
+Nikita (La Femme Nikita) (1990)	-0.040328	127
+Time to Kill, A (1996)	-0.042790	232
+Boogie Nights (1997)	-0.045660	189
+Kolya (1996)	-0.048866	117
+Henry V (1989)	-0.048877	124
+Devil's Advocate, The (1997)	-0.051560	188
+What's Eating Gilbert Grape (1993)	-0.060495	115
+Murder at 1600 (1997)	-0.064778	218
+Jungle2Jungle (1997)	-0.070645	132
+This Is Spinal Tap (1984)	-0.080796	191
+Real Genius (1985)	-0.096105	119
+Annie Hall (1977)	-0.100120	180
+Seven Years in Tibet (1997)	-0.104329	155
+Remains of the Day, The (1993)	-0.112067	150
+In the Name of the Father (1993)	-0.119390	102
+Little Women (1994)	-0.121053	102
+Kiss the Girls (1997)	-0.122186	143
+Edge, The (1997)	-0.127167	113
+As Good As It Gets (1997)	-0.130466	112
+Crash (1996)	-0.148507	128
+G.I. Jane (1997)	-0.176734	175
+First Wives Club, The (1996)	-0.194496	160
+334 rows × 2 columns
+
+def predict_movies(movie_name):
+    movie_user_ratings=moviemat[movie_name]
+    similar_to_movie=moviemat.corrwith(movie_user_ratings)
+    corr_movie=pd.DataFrame(similar_to_movie,columns=['correlation'])
+    corr_movie.dropna(inplace=True)
+    corr_movie=corr_movie.join(ratings['num of ratings'])
+    
+    predictions=corr_movie[corr_movie['num of ratings']>100].sort_values('correlation',ascending=False)
+    
+    return predictions
+predict_my_movie=predict_movies("Titanic (1997)")
+predict_my_movie.head()
+correlation	num of ratings
+title		
+Titanic (1997)	1.000000	350
+River Wild, The (1994)	0.497600	146
+Abyss, The (1989)	0.472103	151
+Bram Stoker's Dracula (1992)	0.443560	120
+True Lies (1994)	0.435104	208
+
